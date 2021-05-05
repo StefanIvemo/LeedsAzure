@@ -8,12 +8,6 @@ resource parentPolicy 'Microsoft.Network/firewallPolicies@2020-08-01' = {
     sku: {
       tier: 'Standard'
     }
-    dnsSettings: {
-      servers: [
-        '168.63.129.16'
-      ]
-      enableProxy: true
-    }
     threatIntelMode: 'Alert'
   }
 }
