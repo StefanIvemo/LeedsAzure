@@ -1,0 +1,138 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.3.255.40792",
+      "templateHash": "9149422392299135300"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    }
+  },
+  "functions": [],
+  "resources": [
+    {
+      "type": "Microsoft.Network/firewallPolicies",
+      "apiVersion": "2020-08-01",
+      "name": "parent-policy",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "tier": "Standard"
+        },
+        "dnsSettings": {
+          "servers": [
+            "168.63.129.16"
+          ],
+          "enableProxy": true
+        },
+        "threatIntelMode": "Alert"
+      }
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies",
+      "apiVersion": "2020-08-01",
+      "name": "child-policy",
+      "location": "[parameters('location')]",
+      "properties": {
+        "sku": {
+          "tier": "Standard"
+        },
+        "threatIntelMode": "Deny",
+        "dnsSettings": {
+          "servers": [
+            "10.10.10.10",
+            "10.10.10.11"
+          ],
+          "enableProxy": true
+        },
+        "basePolicy": {
+          "id": "[resourceId('Microsoft.Network/firewallPolicies', 'parent-policy')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', 'parent-policy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/firewallPolicies/ruleCollectionGroups",
+      "apiVersion": "2020-08-01",
+      "name": "[format('{0}/Platform-Network-Rules', 'child-policy')]",
+      "properties": {
+        "priority": 1100,
+        "ruleCollections": [
+          {
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "name": "Deny-Https-Private",
+            "priority": 100,
+            "action": {
+              "type": "Deny"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "Https",
+                "description": "Deny https traffic to private ip ranges",
+                "sourceAddresses": [
+                  "*"
+                ],
+                "sourceIpGroups": [],
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "destinationPorts": [
+                  "443"
+                ],
+                "destinationIpGroups": [],
+                "destinationAddresses": [
+                  "10.0.0.0/8",
+                  "172.16.0.0/12",
+                  "192.168.0.0/16"
+                ],
+                "destinationFqdns": []
+              }
+            ]
+          },
+          {
+            "ruleCollectionType": "FirewallPolicyFilterRuleCollection",
+            "name": "Allow-Https-Public",
+            "priority": 200,
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "ruleType": "NetworkRule",
+                "name": "Https",
+                "description": "Allow https traffic to public ip ranges",
+                "sourceAddresses": [
+                  "*"
+                ],
+                "sourceIpGroups": [],
+                "ipProtocols": [
+                  "TCP"
+                ],
+                "destinationPorts": [
+                  "443"
+                ],
+                "destinationIpGroups": [],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationFqdns": []
+              }
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/firewallPolicies', 'child-policy')]"
+      ]
+    }
+  ]
+}
