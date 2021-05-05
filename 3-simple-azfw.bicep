@@ -1,8 +1,8 @@
 // Azure Firewall with multiple Public IPs from prefix using availability zones
 
 param fwName string = 'contoso-fw'
-param subnetId string = '/subscriptions/0e4a9391-6835-4403-b8b0-dcfae6bd9467/resourceGroups/vnet-rg/providers/Microsoft.Network/virtualNetworks/fw-vnet/subnets/AzureFirewallSubnet'
-param fwPolicyId string = '/subscriptions/0e4a9391-6835-4403-b8b0-dcfae6bd9467/resourceGroups/vnet-rg/providers/Microsoft.Network/firewallPolicies/child-policy'
+param subnetId string = ''
+param fwPolicyId string = ''
 param location string = resourceGroup().location
 
 resource ipPrefix 'Microsoft.Network/publicIPPrefixes@2020-08-01' = {

@@ -1,13 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "metadata": {
-    "_generator": {
-      "name": "bicep",
-      "version": "0.3.255.40792",
-      "templateHash": "15269234342564717695"
-    }
-  },
   "parameters": {
     "fwName": {
       "type": "string",
@@ -15,11 +8,11 @@
     },
     "subnetId": {
       "type": "string",
-      "defaultValue": "/subscriptions/0e4a9391-6835-4403-b8b0-dcfae6bd9467/resourceGroups/vnet-rg/providers/Microsoft.Network/virtualNetworks/fw-vnet/subnets/AzureFirewallSubnet"
+      "defaultValue": ""
     },
     "fwPolicyId": {
       "type": "string",
-      "defaultValue": "/subscriptions/0e4a9391-6835-4403-b8b0-dcfae6bd9467/resourceGroups/vnet-rg/providers/Microsoft.Network/firewallPolicies/child-policy"
+      "defaultValue": ""
     },
     "location": {
       "type": "string",
@@ -123,5 +116,12 @@
         "[resourceId('Microsoft.Network/publicIPAddresses', format('{0}-publicip-2', parameters('fwName')))]"
       ]
     }
-  ]
+  ],
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.3.126.58533",
+      "templateHash": "7175687348836439626"
+    }
+  }
 }
